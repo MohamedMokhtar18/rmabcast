@@ -1,6 +1,8 @@
 #include "Mpi_identity.h"
 #include <unistd.h>
 #include "RMA_linear_bcast.h"
+#include "RMA_binary_bcast.h"
+
 
 using namespace std;
 
@@ -20,9 +22,12 @@ int main(int argc, char *argv[]){
     mpiId.Mpi_allocate(&rank,10,sizeof(char),&dataWin,&win);
 
     if (rank==0) {
-        printf("data %s send from rank %d\n",data,rank);
-        RMA_Bcast_Linear(&data,MPI_CHAR,8,size,&win,MPI_COMM_WORLD);
-    }
+        // printf("data %s send from rank %d\n",data,rank);
+        // RMA_Bcast_Linear(&data,MPI_CHAR,8,size,&win,MPI_COMM_WORLD);
+
+        }
+          RMA_Bcast_Binary(&data,MPI_CHAR,8,size,&win);
+
 
      if (rank!=0){
       while (!(*dataWin)){}
