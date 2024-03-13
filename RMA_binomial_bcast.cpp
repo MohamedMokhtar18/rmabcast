@@ -14,11 +14,10 @@ void RMA_Bcast_binomial(void* origin_addr, MPI_Datatype origin_datatype, int my_
                      int message_length, int nproc, MPI_Win* win)
 {
     int result; // Variable to store MPI function call results
-    for (int i = 0; i < nproc; i++)
-    {
+    
         // Call send_loop function for each iteration
-        result = send_loop(origin_addr, origin_datatype, my_rank, i, message_length, nproc, win);
-    }
+        result = send_loop(origin_addr, origin_datatype, my_rank, my_rank, message_length, nproc, win);
+    
 }
 
 /**
@@ -48,6 +47,11 @@ int send_loop(void* origin_addr, MPI_Datatype origin_datatype, int my_rank, int 
             {
                 rank = comp_rank(rank, iteration, nproc); // Compute rank from srank
                 // Lock the target window on the destination process
+                if (rank ==0)
+                {
+                    break;
+                }
+                
                 MPI_Win_lock(MPI_LOCK_EXCLUSIVE, rank, 0, *win);
                 // Perform the MPI Put operation to send data to the destination process
                 MPI_Put(origin_addr, message_length, origin_datatype, rank, 0, message_length, origin_datatype, *win);

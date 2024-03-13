@@ -1,4 +1,7 @@
 #pragma once
+#include <fstream>
+#include <stdio.h>
+#include <iomanip>
 #include <mpi.h>
 #include "RMA_binary_bcast.h" // Include the header file
 #include "RMA_binomial_bcast.h"
@@ -14,5 +17,5 @@ enum bench_type
     binaryBench = 2,
     binomialBench = 3,
 };
-void run_benchmark(MPI_Comm comm, int rank, int size,void* dataWin,bench_type* benchBype,MPI_Win* win);
+void run_benchmark(MPI_Comm comm, int rank, int size,void* dataWin,bench_type* benchType,std::string type,MPI_Win* win);
 void intialize_send_buffer(float* snd_buf, int test_value, int length, int message_number);

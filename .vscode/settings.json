@@ -6,6 +6,9 @@
   "C_Cpp_Runner.cppStandard": "",
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.useMsvc": false,
+  "clang-tidy.checks": [
+    "google-*"
+  ],
   "C_Cpp_Runner.warnings": [
     "-Wall",
     "-Wextra",
@@ -103,6 +106,8 @@
     "streambuf": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp",
-    "chrono": "cpp"
+    "chrono": "cpp",
+    "ctime": "cpp",
+    "ratio": "cpp"
   }
 }

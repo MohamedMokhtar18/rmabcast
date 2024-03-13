@@ -5,7 +5,6 @@
 #include "RMA_binomial_bcast.h"
 #include "benchmark.h"
 
-using namespace std;
 enum bcast_types_t
 {
     linear = 1,
@@ -66,25 +65,34 @@ int main(int argc, char *argv[]){
 
     if (rank==0) {
         char data[9] = "Mokhtar";
-        //  printf("data %s send from rank %d\n",data,rank);
+         if (bcast_type!=benchmark)
+      {
+         printf("data %s send from rank %d\n",data,rank);
+
+      }
         // RMA_Bcast_Linear(&data,MPI_CHAR,8,size,&win,MPI_COMM_WORLD);
         // RMA_Bcast_binomial(&data,MPI_CHAR,rank,8,size,&win);
         // RMA_Bcast_Binary(&data,MPI_CHAR,rank,8,size,&win);
-         if (bcast_type == binomial)
+         if (bcast_type == binomial) {
              RMA_Bcast_binomial(&data,MPI_CHAR,rank,8,size,&win);
-         else if (bcast_type == linear)
+         } else if (bcast_type == linear){
              RMA_Bcast_Linear(&data,MPI_CHAR,8,size,&win,MPI_COMM_WORLD);
-         else if (bcast_type == binary)
+         } else if (bcast_type == binary){
              RMA_Bcast_Binary(&data,MPI_CHAR,rank,8,size,&win);
-         else if (bcast_type==benchmark){
-             run_benchmark(MPI_COMM_WORLD,rank,size,dataWin,&bench_type,&win);
+         } else if (bcast_type==benchmark){
+             run_benchmark(MPI_COMM_WORLD,rank,size,dataWin,&bench_type,std::string(argv[2]),&win);
              }
         }
 
 
      if (rank!=0){
       while (!(*dataWin)){}
-    //    printf("receved data %s at rank %d \n",dataWin,rank);
+      if (bcast_type!=benchmark)
+      {
+         printf("receved data %s at rank %d \n",dataWin,rank);
+
+      }
+      
     }
     mpiId.MPIFinish(&win);
 

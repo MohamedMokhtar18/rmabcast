@@ -15,11 +15,10 @@ int RMA_Bcast_Binary(void* origin_addr, MPI_Datatype origin_datatype, int my_ran
                      int message_length, int nproc, MPI_Win* win)
 {
     int result; // Variable to store MPI function call results
-    for (int i = 0; i < nproc; i++)
-    {
+    
         // Call send_loop_binary function for each iteration
-        result = send_loop_binary(origin_addr, origin_datatype, my_rank, i, message_length, nproc, win);
-    }
+        result = send_loop_binary(origin_addr, origin_datatype, my_rank, my_rank, message_length, nproc, win);
+    
 
     return result; // Return the result
 }
@@ -44,9 +43,14 @@ int send_loop_binary(void* origin_addr, MPI_Datatype origin_datatype, int my_ran
     int child1 = 2 * rank + 1;
     int child2 = 2 * rank + 2;
     
-    if (child1 < nproc)
+    if ((child1 < nproc))
     {
         child1 = (child1 + iteration) % nproc; // mapping to real
+        if (child1==0)
+        {
+            return MPI_SUCCESS;
+        }
+        
         // Lock the target window on the first child
         MPI_Win_lock(MPI_LOCK_EXCLUSIVE, child1, 0, *win);
         // Perform the MPI Put operation to send data to the first child
@@ -59,6 +63,10 @@ int send_loop_binary(void* origin_addr, MPI_Datatype origin_datatype, int my_ran
     {
         child2 = (child2 + iteration) % nproc; // mapping to real
         // Lock the target window on the second child
+         if (child1==0)
+        {
+            return MPI_SUCCESS;
+        }
         MPI_Win_lock(MPI_LOCK_EXCLUSIVE, child2, 0, *win);
         // Perform the MPI Put operation to send data to the second child
         MPI_Put(origin_addr, message_length, origin_datatype, child2, 0, message_length, origin_datatype, *win);
