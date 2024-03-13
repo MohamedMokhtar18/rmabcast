@@ -79,10 +79,12 @@ int main(int argc, char *argv[]){
              RMA_Bcast_Linear(&data,MPI_CHAR,8,size,&win,MPI_COMM_WORLD);
          } else if (bcast_type == binary){
              RMA_Bcast_Binary(&data,MPI_CHAR,rank,8,size,&win);
-         } else if (bcast_type==benchmark){
+         }  
+        }
+        
+        if (bcast_type==benchmark){
              run_benchmark(MPI_COMM_WORLD,rank,size,dataWin,&bench_type,std::string(argv[2]),&win);
              }
-        }
 
 
      if (rank!=0){

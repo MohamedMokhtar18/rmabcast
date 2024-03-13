@@ -47,7 +47,7 @@ int send_loop(void* origin_addr, MPI_Datatype origin_datatype, int my_rank, int 
             {
                 rank = comp_rank(rank, iteration, nproc); // Compute rank from srank
                 // Lock the target window on the destination process
-                if (rank ==0)
+                if (rank <= 0)
                 {
                     break;
                 }

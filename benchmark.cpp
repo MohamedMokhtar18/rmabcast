@@ -2,14 +2,16 @@
 
 
 void run_benchmark(MPI_Comm comm, int rank, int size,void* dataWin,bench_type* benchType,std::string type,MPI_Win* win){
- if (rank == 0 )
-    {
         std::fstream file; /* value for result file*/
         std::fstream fileBench;
-        file.open("results/result" + type + std::to_string(size) + ".dat", std::ios::out); /*create file and open it*/
+                file.open("results/result" + type + std::to_string(size) + ".dat", std::ios::app); /*create file and open it*/
+
+       if (rank == 0 ){ 
+       
         fileBench.open("results/result" + type + std::to_string(size) + "Bench.dat", std::ios::out);
         fileBench << "    message size      transfertime  duplex bandwidth per process and neighbor" << std::endl;
         printf("    message size      transfertime  duplex bandwidth per process and neighbor\n");
+        }
         double start, finish, transfer_time;
         int i, length, test_value;
         length = start_length;
@@ -20,6 +22,7 @@ void run_benchmark(MPI_Comm comm, int rank, int size,void* dataWin,bench_type* b
         {
             for (i = 0; i <= number_of_messages; i++)
             {
+                if (rank == 0 ){
                 if (i == 1)
                     start = MPI_Wtime(); // start the timer
                 test_value = j * 1000000 + i * 10000 + rank * 10;
@@ -33,11 +36,19 @@ void run_benchmark(MPI_Comm comm, int rank, int size,void* dataWin,bench_type* b
                 } else if (*benchType == binaryBench){
                  RMA_Bcast_Binary(snd_buf,MPI_FLOAT,rank,length,size,win);
                  }
+                 
+                 }else if (rank!=0)
+                 {
+                 file<<std::to_string(j)+" before message "+std::to_string(i)+" at rank "+std::to_string(rank) <<std::endl;
+                     while (!(dataWin)){}    
+                 file<<std::to_string(j)+" after message "+std::to_string(i)+" at rank "+std::to_string(rank) <<std::endl;
+                 }
 
             }
-            finish = MPI_Wtime();
             if (rank == 0)
             {
+                            finish = MPI_Wtime();
+
                 transfer_time = (finish - start) / number_of_messages; // calculate transfer message for each pacakge
                  fileBench << std::setw(10) << length * sizeof(float) << " bytes " << std::setw(12) << transfer_time * 1e3 << " Msec " << std::setw(13) << 1.0e-6 * 2 * length * sizeof(float) / transfer_time << " MB/s" << std::endl;
                 printf("%10i bytes %12.3f Msec %13.3f MB/s\n",
@@ -45,8 +56,8 @@ void run_benchmark(MPI_Comm comm, int rank, int size,void* dataWin,bench_type* b
             }
             length = length * length_factor;
         }
-      
-    }
+
+    
    
 }
 

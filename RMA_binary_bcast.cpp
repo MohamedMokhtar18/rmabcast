@@ -46,7 +46,7 @@ int send_loop_binary(void* origin_addr, MPI_Datatype origin_datatype, int my_ran
     if ((child1 < nproc))
     {
         child1 = (child1 + iteration) % nproc; // mapping to real
-        if (child1==0)
+        if (child1<=0)
         {
             return MPI_SUCCESS;
         }
@@ -63,7 +63,7 @@ int send_loop_binary(void* origin_addr, MPI_Datatype origin_datatype, int my_ran
     {
         child2 = (child2 + iteration) % nproc; // mapping to real
         // Lock the target window on the second child
-         if (child1==0)
+         if (child1<=0)
         {
             return MPI_SUCCESS;
         }
